@@ -312,6 +312,31 @@ export const S: Styles = {
     marginTop: 14,
     lineHeight: 1.5,
   },
+  updateBar: {
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "12px 20px",
+    background: "#2a2a4a",
+    borderTop: "1px solid #5858a8",
+    color: "#c8c8ff",
+    fontSize: 14,
+    zIndex: 1000,
+  },
+  updateBtn: {
+    padding: "8px 20px",
+    background: "linear-gradient(135deg, #5050c0, #7040b0)",
+    border: "none",
+    borderRadius: 8,
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: "pointer",
+  },
 };
 
 export const PS: Styles = {

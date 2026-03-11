@@ -4,6 +4,7 @@ import { loadEntries, saveEntries } from "./utils";
 import type { Entry, TabType } from "./types";
 import EntryForm from "./components/EntryForm";
 import History from "./components/History";
+import UpdatePrompt from "./components/UpdatePrompt";
 
 export default function App() {
   const [entries, setEntries] = useState<Entry[]>(() => loadEntries());
@@ -61,6 +62,7 @@ export default function App() {
           onReset={handleReset}
         />
       )}
+      <UpdatePrompt />
     </div>
   );
 }
