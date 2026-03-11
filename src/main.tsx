@@ -4,7 +4,8 @@ import App from "./App";
 
 // Fix: iOS standalone PWA doesn't show keyboard on input tap
 const isStandalone =
-  (navigator as any).standalone ||
+  "standalone" in navigator &&
+  (navigator as unknown as { standalone: boolean }).standalone ||
   window.matchMedia("(display-mode: standalone)").matches;
 
 if (isStandalone) {
