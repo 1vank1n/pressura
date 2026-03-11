@@ -29,23 +29,13 @@ npm run dev
 | `npm run preview` | Просмотр сборки |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | Проверка типов TypeScript |
-| `npm run deploy` | Сборка + деплой на GitHub Pages |
+## Деплой
 
-## Деплой на GitHub Pages
+Автоматический через GitHub Actions — каждый пуш в `main` запускает сборку и публикацию на GitHub Pages.
 
-1. В `vite.config.js` убедись, что `base` совпадает с именем репо:
-   ```js
-   base: '/pressura/',
-   ```
+Для работы нужно в настройках репозитория: Settings → Pages → Source → выбрать **GitHub Actions**.
 
-2. Задеплой:
-   ```bash
-   npm run deploy
-   ```
-
-3. В настройках репозитория → Pages → Source выбери ветку `gh-pages`
-
-Сайт будет доступен по адресу: `https://ТВОЙ_ЮЗЕРНЕЙМ.github.io/pressura/`
+Сайт: https://1vank1n.github.io/pressura/
 
 ## Стек
 
