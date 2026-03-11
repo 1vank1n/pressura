@@ -81,7 +81,6 @@ export default function EntryForm({ onSave }: EntryFormProps) {
                   ...S.painBtn,
                   background: pain === p.value ? p.color : "#2a2a3a",
                   color: pain === p.value ? "#000" : "#888",
-                  transform: pain === p.value ? "scale(1.2)" : "scale(1)",
                   fontWeight: pain === p.value ? 800 : 500,
                 }}
               >
