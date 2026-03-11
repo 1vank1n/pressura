@@ -16,7 +16,14 @@ export default function EntryCard({ entry, onDelete }: EntryCardProps) {
         <span style={entry.type === "headache" ? S.badge : S.badgeBlue}>
           {entry.type === "headache" ? "🤕" : "💓"}
         </span>
-        <button onClick={() => onDelete(entry.id)} style={S.delBtn}>
+        <button
+          onClick={() => {
+            if (window.confirm("Удалить эту запись?")) {
+              onDelete(entry.id);
+            }
+          }}
+          style={S.delBtn}
+        >
           ✕
         </button>
       </div>

@@ -3,6 +3,7 @@
   "short_name": "Pressura",
   "start_url": ".",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#13131f",
   "theme_color": "#13131f",
   "icons": [
