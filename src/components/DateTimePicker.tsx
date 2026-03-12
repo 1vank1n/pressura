@@ -139,9 +139,17 @@ export default function DateTimePicker({ value, onChange }: DateTimePickerProps)
               >
                 ▲
               </button>
-              <span style={PS.timeValue}>
-                {String(parsed.hour).padStart(2, "0")}
-              </span>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={String(parsed.hour).padStart(2, "0")}
+                onChange={(e) => {
+                  const v = parseInt(e.target.value, 10);
+                  if (!isNaN(v) && v >= 0 && v <= 23) update({ hour: v });
+                }}
+                onFocus={(e) => e.target.select()}
+                style={PS.timeInput}
+              />
               <button
                 onClick={() => update({ hour: (parsed.hour + 1) % 24 })}
                 style={PS.timeArrow}
@@ -157,9 +165,17 @@ export default function DateTimePicker({ value, onChange }: DateTimePickerProps)
               >
                 ▲
               </button>
-              <span style={PS.timeValue}>
-                {String(parsed.minute).padStart(2, "0")}
-              </span>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={String(parsed.minute).padStart(2, "0")}
+                onChange={(e) => {
+                  const v = parseInt(e.target.value, 10);
+                  if (!isNaN(v) && v >= 0 && v <= 59) update({ minute: v });
+                }}
+                onFocus={(e) => e.target.select()}
+                style={PS.timeInput}
+              />
               <button
                 onClick={() => update({ minute: (parsed.minute + 5) % 60 })}
                 style={PS.timeArrow}
