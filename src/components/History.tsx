@@ -33,8 +33,17 @@ function groupByMonth(entries: Entry[]): Map<string, MonthGroup> {
   }, new Map<string, MonthGroup>());
 }
 
+function parseRuDate(raw: string | number): string {
+  const s = String(raw);
+  const m = s.match(/(\d{2})\.(\d{2})\.(\d{4}),?\s*(\d{2}):(\d{2})/);
+  if (m) return `${m[3]}-${m[2]}-${m[1]}T${m[4]}:${m[5]}`;
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? now() : d.toISOString().slice(0, 16);
+}
+
 export default function History({ entries, onDelete, onImport, onReset }: HistoryProps) {
   const [filter, setFilter] = useState<FilterType>("all");
+  const [importMsg, setImportMsg] = useState<{ text: string; ok: boolean } | null>(null);
   const [expandedMonths, setExpandedMonths] = useState<Set<string>>(() => {
     const d = new Date();
     return new Set([`${d.getFullYear()}-${d.getMonth()}`]);
@@ -91,43 +100,43 @@ export default function History({ entries, onDelete, onImport, onReset }: Histor
       if (!sheetName) return;
       const sheet = wb.Sheets[sheetName];
       if (!sheet) return;
-      const rows = XLSX.utils.sheet_to_json<Record<string, string | number>>(sheet);
-      const imported: Entry[] = rows.map((r, i) => {
-        const isHeadache = r["Тип"] === "Головная боль";
-        const dateStr = r["Дата"]
-          ? new Date(
-              String(r["Дата"]).replace(/(\d{2})\.(\d{2})\.(\d{4})/, "$3-$2-$1"),
-            )
-              .toISOString()
-              .slice(0, 16)
-          : now();
+      try {
+        const rows = XLSX.utils.sheet_to_json<Record<string, string | number>>(sheet);
+        const imported: Entry[] = rows.map((r, i) => {
+          const isHeadache = r["Тип"] === "Головная боль";
+          const dateStr = r["Дата"] ? parseRuDate(r["Дата"]) : now();
 
-        if (isHeadache) {
+          if (isHeadache) {
+            return {
+              id: Date.now() + i,
+              type: "headache" as const,
+              datetime: dateStr,
+              pain: Number(r["Боль (1-10)"]) || 5,
+              locations: r["Локализация"]
+                ? String(r["Локализация"]).split(", ").filter(Boolean)
+                : [],
+              triggers: r["Триггеры"]
+                ? String(r["Триггеры"]).split(", ").filter(Boolean)
+                : [],
+              note: String(r["Заметка"] ?? ""),
+            };
+          }
           return {
             id: Date.now() + i,
-            type: "headache" as const,
+            type: "bp" as const,
             datetime: dateStr,
-            pain: Number(r["Боль (1-10)"]) || 5,
-            locations: r["Локализация"]
-              ? String(r["Локализация"]).split(", ").filter(Boolean)
-              : [],
-            triggers: r["Триггеры"]
-              ? String(r["Триггеры"]).split(", ").filter(Boolean)
-              : [],
+            sys: Number(r["Систолич."]) || 0,
+            dia: Number(r["Диастолич."]) || 0,
+            pulse: r["Пульс"] ? Number(r["Пульс"]) : null,
             note: String(r["Заметка"] ?? ""),
           };
-        }
-        return {
-          id: Date.now() + i,
-          type: "bp" as const,
-          datetime: dateStr,
-          sys: Number(r["Систолич."]) || 0,
-          dia: Number(r["Диастолич."]) || 0,
-          pulse: r["Пульс"] ? Number(r["Пульс"]) : null,
-          note: String(r["Заметка"] ?? ""),
-        };
-      });
-      onImport(imported);
+        });
+        onImport(imported);
+        setImportMsg({ text: `Импортировано ${imported.length} записей`, ok: true });
+      } catch {
+        setImportMsg({ text: "Ошибка при импорте файла", ok: false });
+      }
+      setTimeout(() => setImportMsg(null), 3000);
     };
     reader.readAsArrayBuffer(file);
     e.target.value = "";
@@ -196,6 +205,11 @@ export default function History({ entries, onDelete, onImport, onReset }: Histor
           style={{ display: "none" }}
         />
       </label>
+      {importMsg && (
+        <p style={{ ...S.storageNote, color: importMsg.ok ? "#afffaf" : "#faa", marginTop: 8 }}>
+          {importMsg.text}
+        </p>
+      )}
       <p style={S.storageNote}>
         Данные хранятся локально в браузере, не на сервере. Используйте экспорт/импорт
         Excel, чтобы не потерять записи при очистке браузера или смене устройства.
